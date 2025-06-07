@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestRegressor
-
+import extra_functions.funcs as funcs
 
 
 # Loading the dataset with parsing dates
@@ -24,7 +24,7 @@ df = df.drop("saledate", axis = 1)
 
 # Then, we're going to handle the missing values
 for col in df.columns:
-    if df[col].isna().sum() > 330158: # 80% of the data is missing
+    if df[col].isna().sum() > 300000: # 80% of the data is missing
         df = df.drop(col, axis=1)
     else:
         if df[col].dtype == "object":
@@ -49,4 +49,12 @@ df_train = df[df.saleYear != 2012]
 X_train, X_valid = df_train.drop(["SalePrice", "SalesID"], axis=1), df_validation.drop(["SalePrice", "SalesID"], axis=1)
 y_train, y_valid = df_train["SalePrice"], df_validation["SalePrice"]
 
+# building the model
+model = RandomForestRegressor(n_jobs=-1, random_state=42)
+model.fit(X_train, y_train)
 
+# let's evaluate the model
+scores = funcs.model_evaluation(model, X_train, y_train, X_valid, y_valid)
+
+for score_name, score_value in scores.items():
+    print(f"{score_name}: {score_value:.2f}")

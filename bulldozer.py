@@ -32,10 +32,21 @@ for col in df.columns:
             df[col] = df[col].fillna(df[col].median())
             
 # Let's change everything to numeric
-
 non_numeric_cols = df.select_dtypes(include=["object"]).columns
 
 for col in non_numeric_cols:
     df[col] = df[col].astype(str)
     le = LabelEncoder()
     df[col] = le.fit_transform(df[col])
+
+# once we've done this, we can start to build a model
+# Let's split the data into training and validation sets
+
+df_validation = df[df.saleYear == 2012]
+df_train = df[df.saleYear != 2012]
+
+X_train, X_valid = df_train.drop(["SalePrice, SaleID"], axis=1), df_validation.drop(["SalePrice", "SaleID"], axis=1)
+y_train, y_valid = df_train["SalePrice"], df_validation["SalePrice"]
+
+
+

@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
-import seaborn as sns 
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
+from sklearn.ensemble import RandomForestRegressor
+
 
 
 # Loading the dataset with parsing dates
@@ -45,8 +46,7 @@ for col in non_numeric_cols:
 df_validation = df[df.saleYear == 2012]
 df_train = df[df.saleYear != 2012]
 
-X_train, X_valid = df_train.drop(["SalePrice, SaleID"], axis=1), df_validation.drop(["SalePrice", "SaleID"], axis=1)
+X_train, X_valid = df_train.drop(["SalePrice", "SalesID"], axis=1), df_validation.drop(["SalePrice", "SalesID"], axis=1)
 y_train, y_valid = df_train["SalePrice"], df_validation["SalePrice"]
-
 
 

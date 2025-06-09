@@ -1,4 +1,7 @@
 import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestRegressor
+
 
 df = pd.read_csv("../data/bluebook-for-bulldozers/TrainAndValid.csv", low_memory = False, parse_dates=["saledate"])
 
@@ -33,4 +36,17 @@ for label, content in df.items(): # iterate through each column
     elif not pd.api.types.is_numeric_dtype(content): # if the column has non-numeric data types
         df[label + "_is_missing"] = pd.isnull(content) # create a new column indicating if the value is missing
         df[label] = pd.Categorical(content).codes + 1 # convert to categorical codes and add 1 to avoid -1 for missing values
+
+# Ready to build a model
+# First we need to split the data into training and validation
+df_val = df[df.saleYear == 2012] # validation set (2012 because it is the latest year in the dataset)
+df_train = df[df.saleYear != 2012] # training set 
+
+X_train, y_train = df_train.drop(["SalePrice", "SalesID"], axis = 1), df_train.SalePrice
+X_valid, y_valid = df_val.drop(["SalePrice", "SalesID"], axis = 1), df_val.SalePrice
+
+
+
+
+# Let's use the function in "funcs.py" to evaluate our model
 

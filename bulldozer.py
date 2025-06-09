@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
+from extra_functions.funcs import evaluate_model
 
 
 df = pd.read_csv("../data/bluebook-for-bulldozers/TrainAndValid.csv", low_memory = False, parse_dates=["saledate"])
@@ -45,8 +46,14 @@ df_train = df[df.saleYear != 2012] # training set
 X_train, y_train = df_train.drop(["SalePrice", "SalesID"], axis = 1), df_train.SalePrice
 X_valid, y_valid = df_val.drop(["SalePrice", "SalesID"], axis = 1), df_val.SalePrice
 
-
-
+# Let's build a model
+model = RandomForestRegressor(n_jobs=-1, random_state=42, max_samples=10000)
+model.fit(X_train, y_train)
 
 # Let's use the function in "funcs.py" to evaluate our model
+scores = evaluate_model(model, X_train, y_train, X_valid, y_valid)
+
+# let's print the scores
+for score_name, score_value in scores.items():
+    print(f"{score_name}: {score_value:.2f}")
 

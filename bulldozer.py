@@ -20,3 +20,18 @@ for label, content in df.items():
     if pd.api.types.is_object_dtype(content): # if the column is a 'object' data type
         df[label] = content.astype("category").cat.as_ordered() # convert to categorical type
 
+# Let's handle the missing values now
+for col in df.columns:
+    if df[col].isna().sum()*100/ len(df) > 70: # if more than 70% of the column is missing, we drop it
+        df = df.drop(col, axis = 1)
+
+for label, content in df.items():
+    if pd.api.types.is_numeric_dtype(content): # if the column has numeric data types
+        if pd.isnull(content).sum():
+            df[label + "_is_missing"] = pd.isnull(content)
+            df[label] = content.fillna(content.median())
+    elif not pd.api.types.is_numeric_dtype(content): # if the column has non-numeric data types
+        df[label + "_is_missing"] = pd.isnull(content)
+        df[label] = pd.Categorical(content).codes + 1
+
+

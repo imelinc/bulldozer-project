@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from extra_functions.funcs import evaluate_model
-
+from sklearn.model_selection import RandomizedSearchCV
 
 df = pd.read_csv("../data/bluebook-for-bulldozers/TrainAndValid.csv", low_memory = False, parse_dates=["saledate"])
 
@@ -54,6 +54,37 @@ model.fit(X_train, y_train)
 scores = evaluate_model(model, X_train, y_train, X_valid, y_valid)
 
 # let's print the scores
+print("\nBaseline Model Evaluation Scores:")
 for score_name, score_value in scores.items():
     print(f"{score_name}: {score_value:.2f}")
+print("\n")
+
+# Let's try to improve our model using RandomizedSearchCV
+# Define the hyperparameter grid
+grid = {
+    "n_estimators": np.arange(10,100, 10),
+    "max_depth": [None, 3,5,10],
+    "min_samples_split": np.arange(2, 20, 2),
+    "min_samples_leaf": np.arange(1, 20, 2),
+    "max_features": [0.5, 1, "sqrt", "log2"],
+    "max_samples": [10000]
+}
+
+# Let's build the RandomizedSearchCV model
+rs_model = RandomizedSearchCV(RandomForestRegressor(n_jobs=-1, random_state=42),
+                                                   param_distributions=grid,
+                                                   n_iter=100,
+                                                   cv=5,
+                                                   verbose=True,
+                                                   error_score= "raise")
+
+# Fit the model
+rs_model.fit(X_train, y_train)
+# Evaluate the model
+rs_scores = evaluate_model(rs_model, X_train, y_train, X_valid, y_valid)
+# Print the scores
+print("\nRandomized Search Model Evaluation Scores:")
+for score_name, score_value in rs_scores.items():
+    print(f"{score_name}: {score_value:.2f}")
+print("\n")
 

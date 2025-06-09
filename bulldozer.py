@@ -25,13 +25,12 @@ for col in df.columns:
     if df[col].isna().sum()*100/ len(df) > 70: # if more than 70% of the column is missing, we drop it
         df = df.drop(col, axis = 1)
 
-for label, content in df.items():
+for label, content in df.items(): # iterate through each column
     if pd.api.types.is_numeric_dtype(content): # if the column has numeric data types
-        if pd.isnull(content).sum():
-            df[label + "_is_missing"] = pd.isnull(content)
-            df[label] = content.fillna(content.median())
+        if pd.isnull(content).sum(): # if there are missing values in the column
+            df[label + "_is_missing"] = pd.isnull(content) # create a new column indicating if the value is missing
+            df[label] = content.fillna(content.median()) # fill missing values with the median
     elif not pd.api.types.is_numeric_dtype(content): # if the column has non-numeric data types
-        df[label + "_is_missing"] = pd.isnull(content)
-        df[label] = pd.Categorical(content).codes + 1
-
+        df[label + "_is_missing"] = pd.isnull(content) # create a new column indicating if the value is missing
+        df[label] = pd.Categorical(content).codes + 1 # convert to categorical codes and add 1 to avoid -1 for missing values
 

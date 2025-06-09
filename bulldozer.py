@@ -91,9 +91,6 @@ for score_name, score_value in rs_scores.items():
 print("\n")
 
 # Well, the tuned model is worse than the basline model, so let's stick with the baseline model
-# Save the model
-joblib.dump(model, "//models/bulldozer_model.pkl")
-
 # now lets take a look at the feature importances
 df_features = pd.DataFrame({"features": X_train.columns, "importance": model.feature_importances_}).sort_values("importance", ascending=False).reset_index(drop=True)
 
@@ -102,7 +99,7 @@ ax.barh(df_features["features"].head(20), df_features["importance"].head(20), co
 ax.set_ylabel("Features")
 ax.set_xlabel("Feature Importance")
 ax.invert_yaxis()
-ax.set_titple("Top 20 Feature Importances")
+ax.set_title("Top 20 Feature Importances")
 plt.tight_layout()
-plt.savefig("//imgs/bulldozer_feature_importances.png")
+plt.savefig("./imgs/feature_importances.png")
 
